@@ -1,0 +1,1 @@
+"""Competitor data ingestion module."""

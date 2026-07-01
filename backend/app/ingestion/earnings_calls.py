@@ -1,0 +1,1 @@
+"""Earnings calls ingestion module."""
