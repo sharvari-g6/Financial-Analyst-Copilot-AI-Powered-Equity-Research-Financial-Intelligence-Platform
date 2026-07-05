@@ -1,13 +1,13 @@
-from backend.app.rag.query_engine import QueryEngine
 from backend.app.prompts.financial_prompt import FinancialPrompt
 from backend.app.models.financial_report import FinancialReport
+from backend.app.core.services import query_engine
 
 
 class FinancialAgent:
 
     def __init__(self):
 
-        self.query_engine = QueryEngine()
+        self.query_engine = query_engine
 
     def analyze_company(
         self,

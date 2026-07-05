@@ -1,4 +1,4 @@
-from backend.app.rag.query_engine import QueryEngine
+from backend.app.core.services import query_engine
 from backend.app.prompts.risk_prompt import RiskPrompt
 from backend.app.models.risk_report import RiskReport
 
@@ -7,7 +7,7 @@ class RiskAgent:
 
     def __init__(self):
 
-        self.query_engine = QueryEngine()
+        self.query_engine = query_engine
 
     def analyze_company(
         self,

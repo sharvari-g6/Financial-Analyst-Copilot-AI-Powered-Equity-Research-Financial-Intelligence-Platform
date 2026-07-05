@@ -1,20 +1,27 @@
-from langchain_ollama import ChatOllama
+from backend.app.core.singleton import Singleton
 
 
 class LLMClient:
 
     def __init__(self):
 
-        self.llm = ChatOllama(
+        self.client = Singleton.ollama_client()
 
-            model="llama3.1:8b",
-
-            temperature=0.2
-
-        )
+        self.model = "llama3.1:8b"
 
     def generate(self, prompt: str):
 
-        response = self.llm.invoke(prompt)
+        response = self.client.chat(
 
-        return response.content
+            model=self.model,
+
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+
+        )
+
+        return response["message"]["content"]

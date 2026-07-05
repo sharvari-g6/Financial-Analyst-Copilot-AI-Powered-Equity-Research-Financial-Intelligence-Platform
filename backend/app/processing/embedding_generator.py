@@ -1,13 +1,11 @@
-from sentence_transformers import SentenceTransformer
+from backend.app.core.singleton import Singleton
 
 
 class EmbeddingGenerator:
 
     def __init__(self):
 
-        self.model = SentenceTransformer(
-            "BAAI/bge-small-en-v1.5"
-        )
+        self.model = Singleton.embedding_model()
 
     def generate_embedding(
         self,
