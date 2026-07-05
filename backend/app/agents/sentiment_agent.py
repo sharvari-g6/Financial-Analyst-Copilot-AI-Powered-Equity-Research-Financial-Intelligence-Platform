@@ -11,15 +11,61 @@ class SentimentAgent:
 
     def analyze_company(
         self,
-        company: str
+        company: str,
+        context: str = None
     ):
 
         prompt = SentimentPrompt.get_prompt(company)
 
-        question = (
-            f"Analyze the management sentiment, future outlook, "
-            f"and investor sentiment for {company}."
-        )
+        question = f"What is the management sentiment of {company}?"
+
+        # ----------------------------------
+        # Shared Context Mode
+        # ----------------------------------
+
+        if context is not None:
+
+            result = self.query_engine.ask_from_context(
+
+                question=question,
+
+                context=context,
+
+                system_prompt=prompt
+
+            )
+
+            report = SentimentReport(
+
+                company=company,
+
+                summary=result["answer"],
+
+                management_tone="",
+
+                future_guidance="",
+
+                positive_signals="",
+
+                negative_signals="",
+
+                risk_language="",
+
+                growth_expectations="",
+
+                investor_sentiment="",
+
+                confidence="",
+
+                sources=[]
+
+            )
+
+            return report
+
+        # ----------------------------------
+        # Normal RAG Mode
+        # ----------------------------------
 
         result = self.query_engine.ask(
 

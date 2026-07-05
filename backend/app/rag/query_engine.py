@@ -39,10 +39,11 @@ class QueryEngine:
 
         # Step 4: Build context
         context = "\n\n".join(
-            [doc["text"] for doc in ranked_docs]
+            doc["text"]
+            for doc in ranked_docs
         )
 
-        # Step 5: Build final prompt
+        # Step 5: Build prompt
         prompt = f"""
 {system_prompt}
 
@@ -76,4 +77,48 @@ User Question
             "question": question,
             "answer": answer,
             "sources": citations
+        }
+
+    def ask_from_context(
+        self,
+        question: str,
+        context: str,
+        system_prompt: str = ""
+    ):
+        """
+        Uses an already retrieved context.
+        No Pinecone retrieval is performed.
+        """
+
+        prompt = f"""
+{system_prompt}
+
+Use ONLY the financial context below to answer the user's question.
+
+If the required information is not present in the context, reply:
+
+"I could not find sufficient evidence in the provided financial documents."
+
+Do not hallucinate.
+Do not make assumptions.
+Answer in a professional and concise manner.
+
+========================
+Financial Context
+========================
+
+{context}
+
+========================
+User Question
+========================
+
+{question}
+"""
+
+        answer = self.llm.generate(prompt)
+
+        return {
+            "question": question,
+            "answer": answer
         }

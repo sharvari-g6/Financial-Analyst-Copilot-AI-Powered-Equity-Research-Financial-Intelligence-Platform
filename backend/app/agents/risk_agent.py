@@ -11,12 +11,63 @@ class RiskAgent:
 
     def analyze_company(
         self,
-        company: str
+        company: str,
+        context: str = None
     ):
 
         prompt = RiskPrompt.get_prompt(company)
 
-        question = f"What are the major business and financial risks faced by {company}?"
+        question = f"What are the major risks of {company}?"
+
+        # -------------------------------
+        # Shared Context Mode
+        # -------------------------------
+
+        if context is not None:
+
+            result = self.query_engine.ask_from_context(
+
+                question=question,
+
+                context=context,
+
+                system_prompt=prompt
+
+            )
+
+            report = RiskReport(
+
+                company=company,
+
+                summary=result["answer"],
+
+                business_risks="",
+
+                financial_risks="",
+
+                operational_risks="",
+
+                regulatory_risks="",
+
+                supply_chain_risks="",
+
+                market_risks="",
+
+                future_outlook="",
+
+                overall_rating="",
+
+                confidence="",
+
+                sources=[]
+
+            )
+
+            return report
+
+        # -------------------------------
+        # Normal RAG Mode
+        # -------------------------------
 
         result = self.query_engine.ask(
 

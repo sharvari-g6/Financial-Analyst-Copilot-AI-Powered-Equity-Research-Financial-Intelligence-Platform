@@ -13,6 +13,10 @@ class AgentRouter:
         self.valuation = ValuationAgent()
         self.sentiment = SentimentAgent()
 
+    # --------------------------------------------------
+    # Existing Query Router
+    # --------------------------------------------------
+
     def route(
         self,
         company: str,
@@ -99,20 +103,40 @@ class AgentRouter:
             or "complete" in query
         ):
 
-            reports = {
-
-                "financial":
-                    self.financial.analyze_company(company),
-
-                "risk":
-                    self.risk.analyze_company(company),
-
-                "valuation":
-                    self.valuation.analyze_company(company),
-
-                "sentiment":
-                    self.sentiment.analyze_company(company)
-
-            }
+            reports = self.run_all(company)
 
         return reports
+
+    # --------------------------------------------------
+    # NEW: Shared Context Mode (Phase 6.1)
+    # --------------------------------------------------
+
+    def run_all(
+        self,
+        company: str,
+        context: str = None
+    ):
+
+        return {
+
+            "financial": self.financial.analyze_company(
+                company,
+                context=context
+            ),
+
+            "risk": self.risk.analyze_company(
+                company,
+                context=context
+            ),
+
+            "valuation": self.valuation.analyze_company(
+                company,
+                context=context
+            ),
+
+            "sentiment": self.sentiment.analyze_company(
+                company,
+                context=context
+            )
+
+        }

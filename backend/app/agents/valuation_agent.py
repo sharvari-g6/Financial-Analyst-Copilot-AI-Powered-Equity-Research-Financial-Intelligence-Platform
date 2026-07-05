@@ -11,15 +11,61 @@ class ValuationAgent:
 
     def analyze_company(
         self,
-        company: str
+        company: str,
+        context: str = None
     ):
 
         prompt = ValuationPrompt.get_prompt(company)
 
-        question = (
-            f"Evaluate the investment attractiveness and valuation "
-            f"of {company} based on the available financial documents."
-        )
+        question = f"Evaluate the valuation of {company}."
+
+        # ----------------------------------
+        # Shared Context Mode
+        # ----------------------------------
+
+        if context is not None:
+
+            result = self.query_engine.ask_from_context(
+
+                question=question,
+
+                context=context,
+
+                system_prompt=prompt
+
+            )
+
+            report = ValuationReport(
+
+                company=company,
+
+                summary=result["answer"],
+
+                revenue_outlook="",
+
+                profitability_outlook="",
+
+                cash_flow_strength="",
+
+                competitive_position="",
+
+                growth_opportunities="",
+
+                valuation_opinion="",
+
+                investment_thesis="",
+
+                confidence="",
+
+                sources=[]
+
+            )
+
+            return report
+
+        # ----------------------------------
+        # Normal RAG Mode
+        # ----------------------------------
 
         result = self.query_engine.ask(
 
