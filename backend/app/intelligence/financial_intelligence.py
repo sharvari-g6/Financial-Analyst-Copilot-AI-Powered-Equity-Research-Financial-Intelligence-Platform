@@ -1,5 +1,6 @@
 from backend.app.rag.retriever import Retriever
 from backend.app.router.agent_router import AgentRouter
+from backend.app.fusion.report_fusion import ReportFusion
 
 
 class FinancialIntelligenceEngine:
@@ -8,6 +9,7 @@ class FinancialIntelligenceEngine:
 
         self.retriever = Retriever()
         self.router = AgentRouter()
+        self.fusion = ReportFusion()
 
     def analyze_company(
         self,
@@ -32,12 +34,14 @@ class FinancialIntelligenceEngine:
             context=context
         )
 
-        return {
+        final_report = self.fusion.fuse(
 
-            "company": company,
+            company=company,
 
-            "reports": reports,
+            reports=reports,
 
-            "sources": documents
+            sources=documents
 
-        }
+        )
+
+        return final_report
