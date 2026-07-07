@@ -1,4 +1,4 @@
-from backend.app.models.intelligence_report import IntelligenceReport
+from backend.app.agents.intelligence_report import IntelligenceReport
 from backend.app.fusion.executive_fusion import ExecutiveFusion
 
 
