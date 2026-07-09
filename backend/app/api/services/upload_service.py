@@ -4,8 +4,16 @@ import shutil
 from backend.app.processing.pdf_parser import PDFParser
 from backend.app.processing.chunker import DocumentChunker
 from backend.app.processing.document_builder import DocumentBuilder
+
 from backend.app.database.pinecone_db import PineconeDB
+from backend.app.database.postgres import SessionLocal
+
 from backend.app.graph.graph_builder import GraphBuilder
+
+from backend.app.analysis.pipeline import AnalysisPipeline
+
+from backend.app.repositories.analysis_repository import AnalysisRepository
+from backend.app.utils.json_converter import to_json_serializable
 
 
 class UploadService:
@@ -17,6 +25,10 @@ class UploadService:
         self.vector_db = PineconeDB()
 
         self.graph_builder = GraphBuilder()
+
+        self.pipeline = AnalysisPipeline()
+
+        self.analysis_repo = AnalysisRepository()
 
     def process_upload(
         self,
@@ -67,9 +79,7 @@ class UploadService:
 
         print("Building document objects...")
 
-        builder = DocumentBuilder()
-
-        documents = builder.build_documents(
+        documents = DocumentBuilder.build_documents(
 
             chunks=chunks,
 
@@ -102,6 +112,56 @@ class UploadService:
         self.graph_builder.build(company)
 
         # ---------------------------------------
+        # Run Complete Analysis
+        # ---------------------------------------
+
+        print("Running Analysis Pipeline...")
+
+        analysis = self.pipeline.run(company)
+
+        # ---------------------------------------
+        # Save Analysis to PostgreSQL
+        # ---------------------------------------
+
+        db = SessionLocal()
+
+        try:
+
+            self.analysis_repo.save_analysis(
+
+                db=db,
+
+                company=company,
+
+                year=year,
+
+                financial_data=to_json_serializable(
+                    analysis["financial_data"]
+                ),
+
+                prophet_forecast=to_json_serializable(
+                    analysis["prophet_forecasts"]
+                ),
+
+                xgboost_forecast=to_json_serializable(
+                    analysis["xgboost_forecasts"]
+                ),
+
+                forecast_report=to_json_serializable(
+                    analysis["forecast_report"]
+                ),
+
+                intelligence_report=to_json_serializable(
+                    analysis["intelligence_report"]
+                )
+
+            )
+
+        finally:
+
+            db.close()
+
+        # ---------------------------------------
         # Response
         # ---------------------------------------
 
@@ -111,8 +171,10 @@ class UploadService:
 
             "company": company,
 
+            "year": year,
+
             "chunks": vector_count,
 
-            "message": "Document processed successfully."
+            "message": "Document processed successfully and analysis saved."
 
         }
