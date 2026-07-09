@@ -28,3 +28,7 @@ prophet
 xgboost
 
 matplotlib
+
+fastapi
+uvicorn
+python-mulipart
