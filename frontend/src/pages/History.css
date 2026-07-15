@@ -1,0 +1,6 @@
+.history-page{min-height:calc(100vh - 80px);padding:28px 12px}
+.history-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px}
+.history-card{background:var(--surface);padding:18px;border-radius:12px;text-align:left;box-shadow:0 8px 28px rgba(2,6,23,0.04)}
+.history-card h2{margin-bottom:8px}
+.history-card h3{color:var(--muted);margin-bottom:14px}
+.history-card button{width:100%;padding:10px;border-radius:8px}

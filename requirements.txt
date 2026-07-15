@@ -32,3 +32,6 @@ matplotlib
 fastapi
 uvicorn
 python-mulipart
+
+axios
+react-router-dom
